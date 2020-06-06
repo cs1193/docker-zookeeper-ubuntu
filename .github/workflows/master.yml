@@ -1,0 +1,24 @@
+name: docker-adoptopenjdk8/master
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Login to Docker Registry
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+    - name: Build the Docker image
+      run: |
+		    docker build --build-arg base_image=cs1193/adoptopenjdk-8 -t cs1193/zookeeper-base:latest -f ./images/zookeeper/zookeeper.Dockerfile .
+
+    - name: Push the Docker image
+      run: |
+        docker push cs1193/zookeeper-base:latest
